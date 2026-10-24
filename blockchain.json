@@ -1,0 +1,14 @@
+{
+  "chain": [
+    {
+      "index": 0,
+      "transactions": [],
+      "timestamp": "2026-03-16 15:15:09",
+      "previous_hash": "0",
+      "nonce": 599,
+      "hash": "00009e454c4f54913d8236f80c25a970ab6fd2366cba5e50445119c7e7282de6"
+    }
+  ],
+  "difficulty": 4,
+  "pending_transactions": []
+}
