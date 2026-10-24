@@ -62,6 +62,13 @@ Run backend tests from the `backend/` directory:
 python -m pytest
 ```
 
+## Render deployment
+
+Create a Render **Web Service** for this repository with **Root Directory** set to
+`backend`. Use `pip install -r requirements.txt` as the build command and
+`gunicorn app:app` as the start command. Configure the backend environment variables
+from `backend/.env.example` in Render's dashboard; do not upload `.env`.
+
 ## Vercel deployment
 
 Create two Vercel projects connected to this repository:
