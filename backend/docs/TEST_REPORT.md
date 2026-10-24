@@ -4,8 +4,8 @@
 
 | Result | Count |
 |---|---:|
-| Total automated pytest items | 81 |
-| Passed | 81 |
+| Total automated pytest items | 84 |
+| Passed | 84 |
 | Failed | 0 |
 | Blocked | 0 |
 | Not tested (automated items) | 0 |
@@ -23,7 +23,8 @@ These counts describe the final isolated pytest run after passing the persisted 
 | Blockchain algorithm | 10 | 0 | PASS |
 | Security and sessions | 4 | 0 | PASS |
 | Voting | 12 | 0 | PASS |
-| **Total** | **81** | **0** | **PASS** |
+| API | 3 | 0 | PASS |
+| **Total** | **84** | **0** | **PASS** |
 
 ## Feature Summary
 
@@ -37,11 +38,11 @@ These counts describe the final isolated pytest run after passing the persisted 
 
 ## Environment Checks
 
-- Final pytest command: `python -m pytest -vv` (81 passed, 0 failed).
-- Pytest collection is restricted to `tests/` by `pytest.ini`; the root `test_mongodb.py` live ping script is excluded from the final automated suite.
+- Final pytest command: `python -m pytest -q` from `backend/` (84 passed, 0 failed).
+- Pytest collection is restricted to `backend/tests/` by `backend/pytest.ini`; `backend/test_mongodb.py` is a manual MongoDB ping script excluded from the automated suite.
 - Flask import and `GET /` startup check: passed (HTTP 200).
 - MongoDB connectivity: read-only administrative `ping` passed. No collection reads/writes or votes were performed by this check.
 - `.env` was not modified; key names/status were inspected without displaying values. `.env` remains listed in `.gitignore`.
 - Runtime `requirements.txt`, MongoDB connection implementation, and OTP email implementation were not changed for this test-suite task.
 - Automated OTP mail tests used a fake SMTP client. No real email, student login, or vote was performed.
-- Render and Vercel deployment checks: not tested. The repository currently has no Vercel adapter/configuration or production WSGI server dependency.
+- Render and Vercel deployment checks: not tested.

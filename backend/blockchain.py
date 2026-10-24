@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import secrets
 import time
 from typing import List, Dict
@@ -103,12 +104,16 @@ class Blockchain:
             "pending_transactions": self.pending_transactions
         }
 
-    def save(self, filename: str = "blockchain.json"):
+    def save(self, filename: str = None):
+        if filename is None:
+            filename = os.path.join(os.path.dirname(__file__), "blockchain.json")
         with open(filename, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
     @staticmethod
-    def load(filename: str = "blockchain.json") -> 'Blockchain':
+    def load(filename: str = None) -> 'Blockchain':
+        if filename is None:
+            filename = os.path.join(os.path.dirname(__file__), "blockchain.json")
         try:
             with open(filename, "r") as f:
                 data = json.load(f)

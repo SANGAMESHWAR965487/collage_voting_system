@@ -4,7 +4,7 @@
 
 The automated suite exercises the existing Flask routes and helper functions. MongoDB operations, login-attempt tracking, student records, OTP records, ballots, and Gmail delivery are replaced with in-memory fakes or mocks. Blockchain algorithm tests use temporary files; route tests use a fake blockchain. The suite does not send email, connect to Atlas, cast a production vote, or write to the repository's `blockchain.json`.
 
-`pytest.ini` limits discovery to `tests/`. This is important because the existing root-level `test_mongodb.py` is a manual MongoDB ping script with top-level execution, not a pytest unit-test module.
+`pytest.ini` limits discovery to `tests/`. Run test commands from `backend/`. The `test_mongodb.py` script is a manual MongoDB ping utility, not a pytest unit-test module.
 
 ## Test Environment
 
@@ -19,12 +19,12 @@ The application is imported for route tests, but all external database and mail 
 
 ## Install Test Dependencies
 
-From the project directory:
+From the repository root:
 
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-dev.txt
+python -m pip install -r backend\requirements-dev.txt
 ```
 
 If PowerShell blocks activation, allow it for the current terminal process only, then activate again:
@@ -38,7 +38,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 
 ## Run Automated Tests
 
-Run the entire isolated suite:
+Change to `backend/`, then run the entire isolated suite:
 
 ```powershell
 python -m pytest
@@ -50,7 +50,7 @@ Run one test file:
 python -m pytest tests/test_otp.py
 ```
 
-Run with verbose test names:
+Run with verbose test names from `backend/`:
 
 ```powershell
 python -m pytest -vv
@@ -78,7 +78,7 @@ Use a staging MongoDB database and test student records, not production election
 8. In a staging election, test one valid ballot, an invalid/missing selection, voting closed, and a repeated ballot. Confirm the MongoDB `votes` record and public blockchain view.
 9. Use admin credentials to test candidate creation, approval/rejection, voting controls, and mining. Candidate update/delete routes are not implemented and should return 404.
 
-The root `test_mongodb.py` script performs only a MongoDB ping and prints the database name. It does not test authentication or modify records.
+The `backend/test_mongodb.py` script performs only a MongoDB ping and prints the database name. It does not test authentication or modify records.
 
 ## Interpreting Results
 
@@ -114,7 +114,7 @@ These are checks to perform after a provider-specific deployment has been config
 
 ### Vercel
 
-- [ ] Treat deployment as blocked until a Vercel-compatible Python/Flask entry point and routing configuration are added; neither is present in this repository.
+- [ ] Set the Vercel backend project's Root Directory to `backend/` and the frontend project's Root Directory to `frontend/`.
 - [ ] Confirm whether the selected runtime supports the application's SMTP workflow and configure all secrets in the provider dashboard.
 - [ ] Replace or provide durable storage for `blockchain.json` and uploads; serverless local filesystems must not be assumed persistent.
 - [ ] Verify Atlas network access, production HTTPS cookies, request/runtime limits, OTP delivery, and staging-only voting before enabling real users.

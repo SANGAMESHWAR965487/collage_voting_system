@@ -1,0 +1,35 @@
+:root {
+    color-scheme: dark;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #101629;
+    color: #edf1ff;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: linear-gradient(140deg, #101629, #1b2340); }
+a { color: #b8c7ff; }
+.site-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem max(1rem, calc((100% - 1050px) / 2)); background: #101629; border-bottom: 1px solid #303958; }
+.brand { color: white; font-size: 1.2rem; font-weight: 700; text-decoration: none; }
+nav { display: flex; flex-wrap: wrap; gap: .6rem; }
+button, .button { border: 0; border-radius: .55rem; padding: .7rem 1rem; background: #687ce1; color: white; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+button.secondary, .button.secondary { background: #303958; }
+button.danger { background: #a83e52; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.container { width: min(950px, calc(100% - 2rem)); margin: 2rem auto; }
+.card { background: #1a2239; border: 1px solid #303958; border-radius: .9rem; padding: 1.4rem; margin: 1rem 0; }
+.narrow { max-width: 520px; margin: 2rem auto; }
+h1, h2, h3 { color: #dce3ff; }
+label { display: block; margin: .85rem 0 .35rem; color: #c2cbe7; }
+input, select { width: 100%; padding: .75rem; color: white; background: #11182a; border: 1px solid #414c70; border-radius: .45rem; font: inherit; }
+form button { margin-top: 1rem; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; }
+.muted { color: #aab4d1; }
+.error { color: #ffadb5; }
+.success { color: #8ee0b4; }
+.candidate, .user-row, .result-row { padding: .8rem 0; border-bottom: 1px solid #303958; }
+.candidate label { display: flex; gap: .6rem; align-items: center; margin: .3rem 0; }
+.candidate input { width: auto; }
+.result-row { display: flex; justify-content: space-between; }
+.settings { display: flex; flex-wrap: wrap; gap: .5rem; }
+#notice { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); padding: .8rem 1rem; border-radius: .5rem; background: #303958; display: none; max-width: min(90vw, 600px); }
+@media (max-width: 600px) { .site-header { align-items: flex-start; flex-direction: column; } }

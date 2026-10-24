@@ -1,75 +1,82 @@
 # College Voting System
 
-A secure Flask college voting application using MongoDB for student accounts, candidates, voting records, and settings. It includes voter authentication, email OTP verification, candidate management, and electronic voting.
+The repository is organized into two independent deployable projects:
 
-## Application Structure
+## Frontend
 
-The project separates HTTP handling, persistence, and presentation:
+All browser-facing files are in [`frontend/`](./frontend/):
 
-- `controllers/` contains Flask blueprints for authentication, administration, results, voting, and blockchain requests.
-- `database/` contains the persistence layer used by those controllers.
-- `templates/` contains the Jinja views rendered for each request.
-- `static/` contains stylesheets and uploaded images.
-- `app.py` configures the Flask application, registers the controllers, and remains the command-line entry point.
+- `index.html`, `app.js`, `config.js`, and `styles.css` are the standalone web client.
+- `templates/` contains the existing Flask/Jinja page designs.
+- `static/` contains styles and frontend assets, including the candidate image directory.
 
-## Requirements
+The standalone client calls the backend JSON API. Set `window.API_BASE_URL` in
+[`frontend/config.js`](./frontend/config.js) to the deployed backend URL, without a
+trailing slash.
 
-- Python 3.8 or newer
-- MongoDB Atlas or a local MongoDB server
-- A Gmail account with 2-Step Verification enabled and an App Password
+## Backend
 
-## Setup
+All Python application files are in [`backend/`](./backend/):
 
-Open PowerShell in the project directory and run:
+- `app.py` is the Flask application entry point.
+- `controllers/` contains the page controllers and JSON API.
+- `database/` contains MongoDB persistence operations.
+- `blockchain.py` contains blockchain logic.
+- `tests/` contains the automated tests.
+- `requirements.txt` and `requirements-dev.txt` list Python dependencies.
+- `docs/` contains MongoDB, testing, and project notes.
+
+The Flask app locates templates and static assets in the sibling `frontend/` folder
+when both projects are run from this repository. The standalone frontend uses its own
+HTML, CSS, and JavaScript and does not require Flask to serve its pages.
+
+## Local setup
+
+In PowerShell from the repository root:
 
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m pip install -r backend\requirements-dev.txt
+Copy-Item backend\.env.example backend\.env
+Set-Location backend
+python app.py
 ```
 
-Copy `.env.example` to `.env` and configure the values. Keep `.env` private; it is excluded by `.gitignore`.
-
-```env
-MONGO_URI=your_mongodb_connection_string
-MONGO_DB_NAME=college_voting
-SECRET_KEY=your_long_random_flask_secret
-ADMIN_ID=admin
-ADMIN_PHONE=your_admin_phone
-ADMIN_PASSWORD=your_private_admin_password
-MAIL_USERNAME=yourgmail@gmail.com
-MAIL_PASSWORD=your_gmail_app_password
-MAIL_DEFAULT_SENDER=yourgmail@gmail.com
-FLASK_ENV=development
-FLASK_DEBUG=false
-```
-
-For MongoDB Atlas, use the cluster connection string for `MONGO_URI` and allow your machine's IP address in Atlas Network Access. Generate a Flask secret with:
+Configure `backend/.env` with your MongoDB Atlas connection, stable `SECRET_KEY`, admin
+credentials, Gmail App Password, and `FRONTEND_ORIGINS`. Keep `.env` private; it is
+excluded by `.gitignore`. Generate a Flask secret with:
 
 ```powershell
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-For a Gmail App Password, enable 2-Step Verification in your Google Account, then go to **Security → App passwords** and generate a password for this application. Put the generated App Password in `MAIL_PASSWORD`; do not use your normal Gmail password.
+For local frontend development, serve the `frontend/` directory on
+`http://localhost:5500` and include that exact origin in `FRONTEND_ORIGINS`.
+See [`backend/docs/MONGODB_SETUP.md`](./backend/docs/MONGODB_SETUP.md) for database and
+data migration instructions.
 
-## Run
-
-```powershell
-python app.py
-```
-
-Open the local URL printed by Flask in your terminal. To check the configured MongoDB connection separately, run:
+Run backend tests from the `backend/` directory:
 
 ```powershell
-python test_mongodb.py
+python -m pytest
 ```
 
-## Student Login And OTP
+## Vercel deployment
 
-Students enter their roll number and password. After MongoDB validates the credentials and the account is approved, the system sends a six-digit OTP to that student's email address stored in the MongoDB user record. The student must verify the OTP before the authenticated session is created and access to `/vote` is allowed.
+Create two Vercel projects connected to this repository:
 
-OTP codes expire after five minutes, are stored in MongoDB only as hashes, and can be used once. Resending creates a new code; resend requests have a 60-second cooldown and are limited to three per login challenge. Student records need a valid `email` value and must be approved by an administrator.
+1. **Backend:** set Root Directory to `backend`. Vercel deploys `app.py` as the Flask
+   application. Add the environment variables listed in `backend/.env.example`; set
+   `FLASK_ENV=production` and `FRONTEND_ORIGINS` to the exact deployed frontend origin.
+2. **Frontend:** set Root Directory to `frontend`, select the **Other** framework preset,
+   and use `.` as the output directory with no build command. Set `API_BASE_URL` in
+   `frontend/config.js` to the backend deployment URL, then redeploy the frontend.
 
-To check delivery for two accounts, log in with Student A's roll number and password, verify the code sent to Student A's registered email, then repeat with Student B. Confirm each message arrives at the address on that particular student's MongoDB record. Do not place OTPs or mail credentials in source code or logs.
+Use custom frontend and backend domains under the same parent domain for session-cookie
+compatibility; browsers may block third-party cookies between unrelated `*.vercel.app`
+domains. Do not use a wildcard CORS origin.
 
-See [MONGODB_SETUP.md](MONGODB_SETUP.md) for MongoDB setup and existing data migration instructions.
+Candidate uploads and blockchain JSON currently use local filesystem storage. Vercel's
+serverless filesystem is not durable, so use persistent object storage and database-
+backed blockchain persistence before relying on those features in production.
